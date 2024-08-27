@@ -46,12 +46,22 @@ st.markdown("""
 @st.cache_resource
 def load_bert_model_and_tokenizer():
     try:
-        # Load model state
+        # Load model and tokenizer from the pickle file
         with open("bert_model.pkl", "rb") as file:
-            model_state_dict = pickle.load(file)
+            saved_objects = pickle.load(file)
+        
+        # Extract model state_dict and tokenizer
+        model_state_dict = saved_objects.get('model_state_dict')
+        tokenizer = saved_objects.get('tokenizer')
+
+        # Initialize model and load state_dict
         model = DistilBertForSequenceClassification.from_pretrained('distilbert-base-uncased')
         model.load_state_dict(model_state_dict)
-        tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+        
+        if tokenizer is None:
+            # Load tokenizer separately if not included in the pickle
+            tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+
         return model, tokenizer
     except Exception as e:
         st.error(f"Failed to load BERT model or tokenizer: {e}")
