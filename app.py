@@ -183,6 +183,7 @@ def recommend_books():
 
         # Extract book names and generate recommendations
         book_names = wishlist_books['book_name'].tolist()
+        st.write(f"Book names in wishlist: {book_names}")  # Debugging print
         recommendations_df = recommend_books_bert(book_names)
 
         if not recommendations_df.empty:
